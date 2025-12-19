@@ -1,0 +1,60 @@
+#:schema https://json.schemastore.org/pyproject.json
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[project]
+name = "hpc_pfc_jax"
+version = "0.1.0"
+requires-python = ">=3.11,<3.12"
+description = "JAX implementation of HPC-PFC agent"
+readme = "README.md"
+dependencies = [
+    # Core JAX stack
+    "jax>=0.4.33",
+    "equinox>=0.11.7",
+    "optax>=0.2.3",
+    "jax-dataclasses>=1.6.1",
+    "jaxtyping",
+
+    # RL specific
+    "gymnax>=0.0.8",
+    "rlax>=0.1.6",
+    "flashbax",
+    "chex",
+
+    # Utilities
+    "loguru>=0.7.2",
+    "torch>=2.4.1",  # For eigenvalue computation in reservoir init
+    "tqdm",
+]
+
+[project.optional-dependencies]
+cuda = ["jax[cuda12]>=0.4.33"]
+mlflow = ["mlflow-skinny>=2.16.2"]
+
+[project.scripts]
+training = "run_experiment:main"
+
+[tool.uv.sources]
+flashbax = { git = "https://github.com/instadeepai/flashbax", rev = "a8ff66c8a66117e3f9e05fffc8679beaa77aa35e" }
+
+[tool.ruff.lint]
+select = [
+    "A",   # flake8-builtins
+    "B",   # flake8-bugbear
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+]
+ignore = [
+    "A003",   # builtin-attribute-shadowing
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
